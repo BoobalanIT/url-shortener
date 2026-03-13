@@ -1,0 +1,158 @@
+<div class="app">
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="logo">snip<span>ly</span></div>
+    <div class="nav-section">Menu</div>
+    <div class="nav-item active">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg>
+      Dashboard
+    </div>
+    <div class="nav-section">Account</div>
+    <div class="nav-item" (click)="logout()">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2h4a2 2 0 012 2v8a2 2 0 01-2 2H6M10 8H2M2 8l3-3M2 8l3 3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Logout
+    </div>
+  </div>
+
+  <!-- Main -->
+  <div class="main">
+
+    <!-- Topbar -->
+    <div class="topbar">
+      <div class="page-title">Dashboard</div>
+      <div class="user-badge">
+        <span>{{ user.email }}</span>
+        <div class="avatar">{{ user.name?.charAt(0)?.toUpperCase() }}</div>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- Alerts -->
+      <div class="alert success" *ngIf="success">{{ success }}</div>
+      <div class="alert error" *ngIf="error">{{ error }}</div>
+
+      <!-- Stats -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-label">Total Links</div>
+          <div class="stat-value dark">{{ urls.length }}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Total Clicks</div>
+          <div class="stat-value green">{{ totalClicks }}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Active Links</div>
+          <div class="stat-value orange">{{ activeUrls }}</div>
+        </div>
+      </div>
+
+      <!-- Create Form -->
+      <div class="create-card">
+        <div class="create-title">Create new short link</div>
+        <form (ngSubmit)="onSubmit()">
+          <div class="input-row">
+            <input
+              class="input-field"
+              type="url"
+              placeholder="https://your-long-url.com"
+              [(ngModel)]="originalUrl"
+              name="originalUrl"
+            />
+            <input
+              class="input-field input-small"
+              type="text"
+              placeholder="short-code"
+              [(ngModel)]="shortCode"
+              name="shortCode"
+            />
+            <input
+              class="input-field input-small"
+              type="date"
+              [(ngModel)]="expiresAt"
+              name="expiresAt"
+            />
+            <button type="submit" class="btn-create" [disabled]="loading">
+              {{ loading ? '...' : 'Shorten' }}
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- URLs List -->
+      <div class="urls-card">
+        <div class="urls-header">
+          <div class="urls-title">Your Links</div>
+          <div class="badge">{{ urls.length }} links</div>
+        </div>
+
+        <div *ngIf="urls.length === 0" class="empty-state">
+          No links yet — create your first one above!
+        </div>
+
+        <div class="url-row" *ngFor="let url of urls">
+
+          <!-- Normal View -->
+          <ng-container *ngIf="editingCode !== url.shortCode">
+            <div class="status-dot" [class.expired]="isExpired(url)"></div>
+            <div class="url-code">{{ url.shortCode }}</div>
+            <div class="url-original">{{ url.originalUrl }}</div>
+            <div class="url-clicks">{{ url.clicks }} clicks</div>
+            <div class="url-expiry" [class.expired-text]="isExpired(url)">
+              {{ isExpired(url) ? 'Expired' : (url.expiresAt ? (url.expiresAt | date:'mediumDate') : 'No expiry') }}
+            </div>
+            <div class="url-actions">
+              <div class="action-btn" (click)="copyUrl(url.shortCode)" title="Copy link">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="5" width="8" height="8" rx="1"/><path d="M3 11V3h8" stroke-linecap="round"/></svg>
+              </div>
+              <div class="action-btn" (click)="startEdit(url)" title="Edit">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 2l3 3-8 8H3v-3L11 2z" stroke-linejoin="round"/></svg>
+              </div>
+              <div class="action-btn danger" (click)="deleteUrl(url.shortCode)" title="Delete">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 4h10M5 4V3a1 1 0 011-1h4a1 1 0 011 1v1M6 7v5M10 7v5M4 4l1 9h6l1-9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+            </div>
+          </ng-container>
+
+          <!-- Edit View -->
+<!-- Edit View -->
+<ng-container *ngIf="editingCode === url.shortCode">
+  <div class="edit-row">
+
+    <!-- Short code now editable -->
+    <input
+      class="input-field input-small"
+      [(ngModel)]="editCode"
+      name="editCode"
+      placeholder="short-code"
+    />
+
+    <!-- Original URL editable -->
+    <input
+      class="input-field"
+      [(ngModel)]="editUrl"
+      name="editUrl"
+      placeholder="New URL"
+    />
+
+    <!-- Expiry date editable -->
+    <input
+      class="input-field input-small"
+      type="date"
+      [(ngModel)]="editExpiry"
+      name="editExpiry"
+    />
+
+    <button class="btn-save" (click)="saveEdit(url.shortCode)">Save</button>
+    <button class="btn-cancel" (click)="cancelEdit()">Cancel</button>
+  </div>
+</ng-container>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

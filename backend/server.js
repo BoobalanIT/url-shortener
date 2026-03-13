@@ -10,6 +10,12 @@ const authRoutes = require("./src/routes/auth.routes");
 const urlRoutes = require("./src/routes/url.routes");
 const { redirectUrl } = require("./src/controllers/url.controller");
 
+// app.use(cors({
+//   origin: "http://localhost:4200",  // ← allow Angular app
+//   methods: ["GET", "POST", "PATCH", "DELETE"],
+//   allowedHeaders: ["Content-Type", "Authorization"]
+// }));
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 

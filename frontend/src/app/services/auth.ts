@@ -5,8 +5,8 @@ import { tap } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private API = 'http://localhost:5000/api/auth';
-
+  // private API = 'http://localhost:5000/api/auth';
+private API = 'https://url-shortener-erit.onrender.com/api/auth';
   constructor(private http: HttpClient, private router: Router) {}
 
   register(data: any) {

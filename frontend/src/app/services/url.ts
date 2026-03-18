@@ -3,8 +3,8 @@ import { HttpClient } from '@angular/common/http';
 
 @Injectable({ providedIn: 'root' })
 export class UrlService {
-  private API = 'http://localhost:5000/api/urls';
-
+  // private API = 'http://localhost:5000/api/urls';
+  private API = 'https://url-shortener-erit.onrender.com/api/urls';
   constructor(private http: HttpClient) {}
 
   getMyUrls() {

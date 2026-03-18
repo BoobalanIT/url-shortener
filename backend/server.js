@@ -15,6 +15,14 @@ const { redirectUrl } = require("./src/controllers/url.controller");
 //   methods: ["GET", "POST", "PATCH", "DELETE"],
 //   allowedHeaders: ["Content-Type", "Authorization"]
 // }));
+app.use(cors({
+  origin: [
+    "http://localhost:4200",
+    "https://url-shortener-erit.onrender.com"  // ← add this
+  ],
+  methods: ["GET", "POST", "PATCH", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+}));
 
 const app = express();
 const PORT = process.env.PORT || 5000;
